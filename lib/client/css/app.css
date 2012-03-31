@@ -1,7 +1,6 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body, input, textarea {
@@ -44,7 +43,7 @@ input, textarea, button {
 }
 
 #message_list .message .author {
-  width: 100px;
+  width: 90px;
   padding: 5px;
   text-align: right;
   display: table-cell;
@@ -112,7 +111,7 @@ input, textarea, button {
 /* entry_form */
 
 #entry_form {
-  height: 40px;
+  height: 20px;
   bottom: 0;
   position: absolute;
   display: table;
@@ -122,7 +121,7 @@ input, textarea, button {
 #entry_form .section {
   display: table-cell;
   vertical-align: middle;
-  height: 100%;
+  height: 40px;
 }
 
 #entry_form .section.name {
@@ -133,25 +132,32 @@ input, textarea, button {
 
 #entry_form .section.name input {
   display: block;
-  width: 100%;
-  height: 100%;
+  height: 30px;
+  width: 90px;
   border: 0;
   text-align: right;
   padding: 5px;
 }
 
 #entry_form .section.message {
-  width: 80%;
+  width: 70%;
 }
 
 #entry_form .section.message textarea {
+  height: 30px;
+  display: block;
   width: 100%;
-  height: 40px;
-  /*border: 0;*/
-  padding: 5px;
+  position: relative;
+  padding: 5px 0;
+  -webkit-box-shadow: inset 0 0 1px black;
+  -moz-box-shadow: inset 0 0 1px black;
+  -ie-box-shadow: inset 0 0 1px black;
+  box-shadow: inset 0 0 1px black;
+  border: 0;
 }
 
 #entry_form .section.send button {
   width: 100%;
   height: 100%;
+  border: 0;
 }

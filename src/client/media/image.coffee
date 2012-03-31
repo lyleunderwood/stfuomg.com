@@ -19,6 +19,12 @@ class ImageMedia extends Media
 
     @link_node.appendChild @img
 
+    setTimeout (=>
+      gcs = window.getComputedStyle @img
+      @small_width = parseInt gcs.width
+      @unzoom()
+    ), 1
+
     @link_node
 
   zoom: ->
@@ -26,8 +32,9 @@ class ImageMedia extends Media
     @zoomer.style.right = 'auto'
 
   unzoom: ->
-    @zoomer.style.left = 'auto'
-    @zoomer.style.right = 0
+    target_width = if @small_width > 20 then @small_width else 20
+    @zoomer.style.left = @small_width - 20 + 'px'
+    @zoomer.style.right = 'auto'
 
   @is_match: (url)->
     !!url.match /\/[^\/]+\.(png|jpg|jpeg|gif)(\?.*)?$/
