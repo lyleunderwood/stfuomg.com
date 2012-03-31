@@ -79,8 +79,11 @@ class Upload
 
     xhr.addEventListener 'load', (e) =>
       console.log 'load', e
-      @completed.dispatch()
-      @clear()
+
+      if xhr.status == 200
+        response = JSON.parse xhr.responseText
+        @completed.dispatch response.path
+        @clear()
 
     xhr.addEventListener 'error', (e) ->
       console.log 'error', e

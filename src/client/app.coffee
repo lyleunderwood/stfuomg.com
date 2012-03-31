@@ -27,8 +27,8 @@ class App
     @entry_form.set_color @get_options().color
 
   attach_signals: ->
-    @entry_form.message_submitted.add (text) =>
-      message = Message.build text, @get_options(), @socket
+    @entry_form.message_submitted.add (text, extra_params) =>
+      message = Message.build text, @get_options(), @socket, extra_params
       message.send()
 
     @entry_form.name_changed.add (name) =>

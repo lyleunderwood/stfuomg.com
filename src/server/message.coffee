@@ -5,7 +5,7 @@ module.exports.Message = class Message
   constructor: (params) ->
 
     filter_content = (content) ->
-      return if !content? || content == ''
+      return '' if !content? || content == ''
 
       content = sanitizer.escape content
       content.substr 0, 200
@@ -20,6 +20,7 @@ module.exports.Message = class Message
     @author_name  = filter_author params.author_name
     @author_ip    = params.author_ip
     @color        = params.color || null
+    @image        = params.image || null
     @server_event = params.server_event || false
 
     return @
@@ -35,6 +36,7 @@ module.exports.Message = class Message
         .set("Message:#{@id}:author_name",  @author_name)
         .set("Message:#{@id}:author_ip",    @author_ip)
         .set("Message:#{@id}:server_event", @server_event)
+        .set("Message:#{@id}:image",        @image)
         .set("Message:#{@id}:color",        JSON.stringify @color)
         .lpush('messages', @id)
         .exec (error) =>
@@ -56,6 +58,8 @@ module.exports.Message = class Message
         message.author_ip = result
       .get "Message:#{id}:server_event", (error, result) ->
         message.server_event = result
+      .get "Message:#{id}:image", (error, result) ->
+        message.image = result
       .get "Message:#{id}:color",        (error, result) ->
         message.color = JSON.parse result
       .exec (error) ->

@@ -83,8 +83,21 @@ class EntryForm
 
   submit_message: ->
     text = @message_input.value
+
+    has_upload_file = @uploader and @uploader.selected_file
+
     valid = !!text.match /[^\s]/
-    @message_submitted.dispatch(@message_input.value) if valid
+
+    if has_upload_file
+      @uploader.upload()
+      @uploader.completed.add =>
+        @perform_submit()
+
+    else if valid
+      @perform_submit()
+
+  perform_submit: ->
+    @message_submitted.dispatch(@message_input.value)
 
     @message_input.value = ''
     @focus()

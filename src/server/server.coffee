@@ -4,6 +4,7 @@ redis = require 'redis'
 Message = require('./message').Message
 formidable = require('formidable')
 util = require 'util'
+fs = require 'fs'
 
 redis_client = redis.createClient()
 
@@ -17,6 +18,7 @@ app = connect()
   .use(connect.logger 'dev')
   .use(upload_middleware)
   .use(connect.static 'lib/client')
+  .use(connect.static 'images')
   .listen 3001
 
 upload_file = (req, res) ->
@@ -27,11 +29,23 @@ upload_file = (req, res) ->
       res.writeHead 422, 'Content-Type': 'application/json'
     else
       file = files.image
-      res.writeHead 200, 'Content-Type': 'application/json'
-      res.write JSON.stringify
-        path: file.name
+      move_uploaded_file file, (path) ->
+        res.writeHead 200, 'Content-Type': 'application/json'
+        res.write JSON.stringify
+          path: file.name
 
-      res.end()
+        res.end()
+
+move_uploaded_file = (file, cb) ->
+  dir = __dirname + '/../../images'
+  fs.stat dir, (error, stats) ->
+
+    fs.mkdir dir, null, (-> move_file file, cb) if error else move_file file, cb
+
+move_file = (file, cb) ->
+  path = __dirname + '/../../images/' + file.name
+  fs.rename file.path, path
+  cb path
 
 io = sio.listen app
 

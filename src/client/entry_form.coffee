@@ -90,14 +90,14 @@ class EntryForm
 
     if has_upload_file
       @uploader.upload()
-      @uploader.completed.add =>
-        @perform_submit()
+      @uploader.completed.add (image_path) =>
+        @perform_submit(image: image_path)
 
     else if valid
       @perform_submit()
 
-  perform_submit: ->
-    @message_submitted.dispatch(@message_input.value)
+  perform_submit: (params) ->
+    @message_submitted.dispatch(@message_input.value, params)
 
     @message_input.value = ''
     @focus()

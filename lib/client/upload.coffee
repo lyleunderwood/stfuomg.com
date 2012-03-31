@@ -68,10 +68,36 @@ class Upload
   upload: ->
     return false unless @selected_file
 
+    fd = new FormData
+
+    fd.append 'image', @selected_file
+
+    xhr = new XMLHttpRequest
+
+    xhr.upload.addEventListener 'progress', (e) ->
+      console.log 'progress', e
+
+    xhr.addEventListener 'load', (e) ->
+      console.log 'load', e
+
+
+    xhr.addEventListener 'error', (e) ->
+      console.log 'error', e
+
+    xhr.addEventListener 'abort', (e) ->
+      console.log 'abort', e
+
+    xhr.open 'POST', '/upload'
+
+    xhr.send fd
+
+
   file_selected: new signals.Signal
 
   cleared: new signals.Signal
 
+  completed: new signals.Signal
+
   @supported: ->
     return false unless XMLHttpRequest
-    !!(FileList && FileReader && (new XMLHttpRequest).upload)
+    !!(FileList && FileReader && FormData && (new XMLHttpRequest).upload)

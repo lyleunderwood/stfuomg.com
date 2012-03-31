@@ -73,9 +73,11 @@ class Message
 
     content
 
-  @build: (content, options, socket) ->
+  @build: (content, options, socket, extra_params) ->
+    image = extra_params && extra_params.image ? extra_params.image : null
     return new Message({
       content:     content
       author_name: options.name
       color:       options.color
+      image:       image
       }, socket)
