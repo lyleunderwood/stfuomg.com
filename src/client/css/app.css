@@ -143,6 +143,29 @@ input, textarea, button {
   width: 70%;
 }
 
+#entry_form .section.upload {
+  display: none;
+}
+
+#entry_form .section.upload {
+  display: none;
+}
+
+#entry_form .section.upload {
+  width: 150px;
+  overflow: hidden;
+  position: relative;
+}
+
+#entry_form .section.upload button {
+  position: absolute;
+  right: 0;
+}
+
+#entry_form .section.upload.selected {
+  display: table-cell;
+}
+
 #entry_form .section.message textarea {
   height: 30px;
   display: block;

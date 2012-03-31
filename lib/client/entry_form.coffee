@@ -39,6 +39,15 @@ class EntryForm
 
     @send_section.appendChild @send_button
 
+    if Upload.supported()
+      @upload_section = document.createElement 'div'
+      @upload_section.className = 'upload section'
+
+      @uploader = new Upload(document.body)
+      @upload_section.appendChild @uploader.node
+
+      @node.insertBefore @upload_section, @message_section
+
     return @node
 
   attach_events: ->
@@ -57,6 +66,13 @@ class EntryForm
 
     @name_input.addEventListener 'change', (e) =>
       @change_name()
+
+    if @uploader
+      @uploader.file_selected.add (file) =>
+        @upload_section.className += ' selected'
+
+      @uploader.cleared.add =>
+        @upload_section.className = @upload_section.className.split('selected').join('')
 
   set_color: (color) ->
     @color = color

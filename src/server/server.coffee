@@ -2,13 +2,36 @@ connect = require 'connect'
 sio = require 'socket.io'
 redis = require 'redis'
 Message = require('./message').Message
+formidable = require('formidable')
+util = require 'util'
 
 redis_client = redis.createClient()
 
+upload_middleware = (req, res, next) ->
+  if req.url is '/upload' && req.method.toLowerCase() is 'post'
+    upload_file req, res
+  else
+    next()
+
 app = connect()
   .use(connect.logger 'dev')
+  .use(upload_middleware)
   .use(connect.static 'lib/client')
   .listen 3001
+
+upload_file = (req, res) ->
+  form = new formidable.IncomingForm()
+
+  form.parse req, (error, fields, files) ->
+    if error || !files.image
+      res.writeHead 422, 'Content-Type': 'application/json'
+    else
+      file = files.image
+      res.writeHead 200, 'Content-Type': 'application/json'
+      res.write JSON.stringify
+        path: file.name
+
+      res.end()
 
 io = sio.listen app
 
