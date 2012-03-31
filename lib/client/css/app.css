@@ -1,0 +1,157 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, input, textarea {
+  font-family: times;
+  font-size: 12px;
+}
+
+
+input, textarea, button {
+  -webkit-appearance: none;
+  border-radius: 0;
+  margin: 0;
+}
+
+/* message_list */
+
+#message_list, html, body {
+  height: 100%;
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+#message_list {
+  padding-bottom: 40px;
+}
+
+#message_list .scroller {
+  overflow: auto;
+  max-height: 100%;
+}
+
+#message_list .messages {
+  list-style: none;
+  display: table;
+}
+
+#message_list .message {
+  display: table-row;
+}
+
+#message_list .message .author {
+  width: 100px;
+  padding: 5px;
+  text-align: right;
+  display: table-cell;
+  vertical-align: top;
+  max-width: 100px;
+  overflow: hidden;
+}
+
+#message_list .message .content {
+  display: table-cell;
+  padding: 5px;
+}
+
+#message_list .message .content .media.youtube iframe,
+#message_list .message .content .media.image img {
+  max-height: 150px;
+  max-width: 150px;
+  border: 0;
+}
+
+#message_list .message .content .media.youtube iframe {
+  width: 150px;
+  height: 150px;
+  display: block;
+}
+
+#message_list .message .content .media.zoomed.image img,
+#message_list .message .content .media.zoomed.youtube iframe {
+  width: auto;
+  height: auto;
+  max-height: none;
+  max-width: none;
+}
+
+#message_list .message .content .media.zoomed.youtube iframe {
+  width: 640px;
+  height: 480px;
+}
+
+
+#message_list .message .content .media.zoomed.youtube .zoomer {
+  left: 620px;
+  right: auto;
+}
+
+#message_list .message .media {
+  position: relative;
+  max-width: 150px;
+}
+
+#message_list .message .media .zoomer {
+  background-color: rgba(255,255,255,0.5);
+  border: 1px solid black;
+  color: black;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+/* entry_form */
+
+#entry_form {
+  height: 40px;
+  bottom: 0;
+  position: absolute;
+  display: table;
+  width: 100%;
+}
+
+#entry_form .section {
+  display: table-cell;
+  vertical-align: middle;
+  height: 100%;
+}
+
+#entry_form .section.name {
+  width: 100px;
+  max-width: 100px;
+  min-width: 100px;
+}
+
+#entry_form .section.name input {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  text-align: right;
+  padding: 5px;
+}
+
+#entry_form .section.message {
+  width: 80%;
+}
+
+#entry_form .section.message textarea {
+  width: 100%;
+  height: 40px;
+  /*border: 0;*/
+  padding: 5px;
+}
+
+#entry_form .section.send button {
+  width: 100%;
+  height: 100%;
+}
