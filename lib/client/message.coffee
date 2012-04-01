@@ -9,6 +9,7 @@ class Message
     @author_name = params.author_name
     @color       = params.color
     @user_name   = params.user_name
+    @image       = params.image
     @socket      = socket
 
     @reference_regex = new RegExp("\@(#{@user_name})") if @user_name?
@@ -23,6 +24,7 @@ class Message
       content:     @content
       author_name: @author_name
       color:       @color
+      image:       @image
     }
 
   send: ->
@@ -37,9 +39,13 @@ class Message
     if urls
       content = @content.replace @url_regex, "<a href='$&' target='_blank'>$&</a>", 'g'
       @content_node.innerHTML = content
-      Media.build urls[0], @
     else
       @content_node.innerHTML = @content
+
+    if @image
+      Media.build window.location.href + '/' + @image, @
+    else if urls
+      Media.build urls[0], @
 
   build: ->
     @node = document.createElement 'li'
@@ -74,7 +80,7 @@ class Message
     content
 
   @build: (content, options, socket, extra_params) ->
-    image = extra_params && extra_params.image ? extra_params.image : null
+    image = if extra_params && extra_params.image then extra_params.image else null
     return new Message({
       content:     content
       author_name: options.name

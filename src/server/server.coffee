@@ -3,10 +3,18 @@ sio = require 'socket.io'
 redis = require 'redis'
 Message = require('./message').Message
 formidable = require('formidable')
+knox = require 'knox'
 util = require 'util'
 fs = require 'fs'
 
 redis_client = redis.createClient()
+
+console.log process.env.AWS_KEY
+
+aws_client = knox.createClient
+  key: process.env.AWS_KEY
+  secret: process.env.AWS_SECRET
+  bucket: process.env.AWS_BUCKET
 
 upload_middleware = (req, res, next) ->
   if req.url is '/upload' && req.method.toLowerCase() is 'post'
@@ -19,22 +27,34 @@ app = connect()
   .use(upload_middleware)
   .use(connect.static 'lib/client')
   .use(connect.static 'images')
-  .listen 3001
+  .listen process.env.PORT || 3001
 
 upload_file = (req, res) ->
   form = new formidable.IncomingForm()
+  upload_length = req.headers['x-upload-length']
+
+  form.onPart = (part) ->
+    aws_req = aws_client.put part.filename,
+      'Content-Type': part.mime
+      'Content-Length': upload_length
+
+    target_url = 'https://s3-us-west-1.amazonaws.com/omfgstfu-uploads/' + part.filename
+
+    aws_req.on 'response', (response) ->
+      res.writeHead 200, 'Content-Type': 'application/json'
+      res.write JSON.stringify
+        path: target_url
+
+      res.end()
+
+    part.addListener 'data', (chunk) ->
+      aws_req.write chunk
+    part.addListener 'end', () ->
+      aws_req.end()
+
+    form.handlePart part
 
   form.parse req, (error, fields, files) ->
-    if error || !files.image
-      res.writeHead 422, 'Content-Type': 'application/json'
-    else
-      file = files.image
-      move_uploaded_file file, (path) ->
-        res.writeHead 200, 'Content-Type': 'application/json'
-        res.write JSON.stringify
-          path: file.name
-
-        res.end()
 
 move_uploaded_file = (file, cb) ->
   dir = __dirname + '/../../images'

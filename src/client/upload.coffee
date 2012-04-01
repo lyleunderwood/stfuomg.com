@@ -47,7 +47,12 @@ class Upload
   valid_file: (file) ->
     return false if !file?
 
-    valid_types = ["image/jpg", "image/png", "image/gif"]
+    valid_types = [
+      "image/jpg",
+      "image/jpeg",
+      "image/png",
+      "image/gif"
+    ]
 
     return false if valid_types.indexOf(file.type) is -1
 
@@ -92,6 +97,7 @@ class Upload
       console.log 'abort', e
 
     xhr.open 'POST', '/upload'
+    xhr.setRequestHeader 'X-Upload-Length', @selected_file.size
 
     xhr.send fd
 

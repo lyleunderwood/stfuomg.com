@@ -39,6 +39,8 @@ class Upload
 
       file = files[0]
 
+      console.log dt, files
+
       @set_selected_file file
 
     @cancel_btn.addEventListener 'click', (e) =>
@@ -48,6 +50,7 @@ class Upload
     return false if !file?
 
     valid_types = ["image/jpg", "image/png", "image/gif"]
+    console.log file
 
     return false if valid_types.indexOf(file.type) is -1
 
@@ -77,9 +80,13 @@ class Upload
     xhr.upload.addEventListener 'progress', (e) ->
       console.log 'progress', e
 
-    xhr.addEventListener 'load', (e) ->
+    xhr.addEventListener 'load', (e) =>
       console.log 'load', e
 
+      if xhr.status == 200
+        response = JSON.parse xhr.responseText
+        @completed.dispatch response.path
+        @clear()
 
     xhr.addEventListener 'error', (e) ->
       console.log 'error', e
