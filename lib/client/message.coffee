@@ -43,7 +43,7 @@ class Message
       @content_node.innerHTML = @content
 
     if @image
-      Media.build window.location.href + '/' + @image, @
+      Media.build @image, @
     else if urls
       Media.build urls[0], @
 
@@ -81,6 +81,7 @@ class Message
 
   @build: (content, options, socket, extra_params) ->
     image = if extra_params && extra_params.image then extra_params.image else null
+
     return new Message({
       content:     content
       author_name: options.name

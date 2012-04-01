@@ -90,8 +90,11 @@ class EntryForm
 
     if has_upload_file
       @uploader.upload()
-      @uploader.completed.add (image_path) =>
+      cb = (image_path) =>
+        @uploader.completed.remove cb
         @perform_submit(image: image_path)
+
+      @uploader.completed.add cb
 
     else if valid
       @perform_submit()
