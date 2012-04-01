@@ -1,2 +1,3 @@
 *.sublime-workspace
 env_vars
+node_modules
