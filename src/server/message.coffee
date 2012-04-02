@@ -20,8 +20,8 @@ module.exports.Message = class Message
     @author_name  = filter_author params.author_name
     @author_ip    = params.author_ip
     @color        = params.color || null
-    @image        = params.image || null
-    @server_event = params.server_event || false
+    @image        = params.image || ''
+    @server_event = params.server_event || ''
 
     return @
 

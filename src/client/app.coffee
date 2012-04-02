@@ -25,6 +25,7 @@ class App
     @node.appendChild @entry_form.node
     @focus()
     @entry_form.set_color @get_options().color
+    @entry_form.set_token @get_options().token
 
   attach_signals: ->
     @entry_form.message_submitted.add (text, extra_params) =>

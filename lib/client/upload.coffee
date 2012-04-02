@@ -1,5 +1,6 @@
 class Upload
-  constructor: (drop_target) ->
+  constructor: (drop_target, socket) ->
+    @socket = socket
     @drop_target = drop_target
     @build()
     @attach_events()
@@ -16,6 +17,14 @@ class Upload
 
     @cancel_btn = document.createElement 'button'
     @cancel_btn.innerHTML = 'X'
+
+    @progress_bar = document.createElement 'div'
+    @progress_bar.className = 'upload_progress_bar'
+
+    @bar = document.createElement 'div'
+    @bar.className = 'bar'
+
+    @progress_bar.appendChild @bar
 
     @node.appendChild @cancel_btn
     @node.appendChild @name_node
@@ -44,6 +53,14 @@ class Upload
     @cancel_btn.addEventListener 'click', (e) =>
       @clear()
 
+    @socket.on 'upload_started', ->
+      @start()
+      console.log 'upload_started'
+
+    @socket.on 'upload_progress', (e) =>
+      @bar.style.width = e.percent + '%'
+      console.log e.percent
+
   valid_file: (file) ->
     return false if !file?
 
@@ -66,8 +83,16 @@ class Upload
     @name_node.innerHTML = file.name
     @size_node.innerHTML = file.size
 
+  set_token: (token) ->
+    @token = token
+
+  start: ->
+    @progress_bar.style.display = 'block'
+
   clear: ->
     @selected_file = null
+    @bar.style.width = '0%'
+    @progress_bar.style.display = 'none'
     @cleared.dispatch()
 
   upload: ->
@@ -98,6 +123,7 @@ class Upload
 
     xhr.open 'POST', '/upload'
     xhr.setRequestHeader 'X-Upload-Length', @selected_file.size
+    xhr.setRequestHeader 'X-Token', @token
 
     xhr.send fd
 
@@ -105,6 +131,10 @@ class Upload
   file_selected: new signals.Signal
 
   cleared: new signals.Signal
+
+  started: new signals.Signal
+
+  progress: new signals.Signal
 
   completed: new signals.Signal
 

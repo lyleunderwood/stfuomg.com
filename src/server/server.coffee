@@ -2,21 +2,35 @@ connect = require 'connect'
 sio = require 'socket.io'
 redis = require 'redis'
 Message = require('./message').Message
-formidable = require('formidable')
-knox = require 'knox'
+FileReceiver = require './file_receiver'
 util = require 'util'
 fs = require 'fs'
 
 redis_client = redis.createClient()
 
-aws_client = knox.createClient
-  key: process.env.AWS_KEY
-  secret: process.env.AWS_SECRET
-  bucket: process.env.AWS_BUCKET
+token_to_socket = {}
 
 upload_middleware = (req, res, next) ->
   if req.url is '/upload' && req.method.toLowerCase() is 'post'
-    upload_file req, res
+    receiver = new FileReceiver(req)
+
+    socket = token_to_socket[receiver.get_token()]
+    receiver.on 'end', (image_url) ->
+      res.writeHead 200, 'Content-Type': 'application/json'
+      res.write JSON.stringify
+        path: image_url
+
+      res.end()
+
+    receiver.on 'progress', (percent, transferred, total) ->
+      socket.emit 'upload_progress',
+        percent: percent
+        transferred: transferred
+        total: total
+
+    receiver.on 'start', ->
+      socket.emit 'upload_started'
+
   else
     next()
 
@@ -26,44 +40,6 @@ app = connect()
   .use(connect.static 'lib/client')
   .use(connect.static 'images')
   .listen process.env.PORT || 3001
-
-upload_file = (req, res) ->
-  form = new formidable.IncomingForm()
-  upload_length = req.headers['x-upload-length']
-
-  form.onPart = (part) ->
-    aws_req = aws_client.put part.filename,
-      'Content-Type': part.mime
-      'Content-Length': upload_length
-
-    target_url = 'https://s3-us-west-1.amazonaws.com/omfgstfu-uploads/' + part.filename
-
-    aws_req.on 'response', (response) ->
-      res.writeHead 200, 'Content-Type': 'application/json'
-      res.write JSON.stringify
-        path: target_url
-
-      res.end()
-
-    part.addListener 'data', (chunk) ->
-      aws_req.write chunk
-    part.addListener 'end', () ->
-      aws_req.end()
-
-    form.handlePart part
-
-  form.parse req, (error, fields, files) ->
-
-move_uploaded_file = (file, cb) ->
-  dir = __dirname + '/../../images'
-  fs.stat dir, (error, stats) ->
-
-    fs.mkdir dir, null, (-> move_file file, cb) if error else move_file file, cb
-
-move_file = (file, cb) ->
-  path = __dirname + '/../../images/' + file.name
-  fs.rename file.path, path
-  cb path
 
 io = sio.listen app
 
@@ -84,9 +60,12 @@ io.sockets.on 'connection', (socket) ->
     io.sockets.emit 'messages', [message]
 
   socket.on 'create_session', (data, cb) ->
+    token = data.token || create_session_token()
     cb
-      token: data.token || create_session_token()
+      token: token
       color: data.color || create_color()
+
+    token_to_socket[token] = socket
 
     socket.set 'options', data
 
