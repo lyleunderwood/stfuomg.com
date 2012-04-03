@@ -52,8 +52,7 @@ class MessageList
     @scroll_bottom()
 
   scroll_bottom: ->
-    gcs = global.getComputedStyle @list_node
-    @scroll_node.scrollTop = parseInt gcs.height
+    @scroll_node.scrollTop = @list_node.scrollHeight
 
   filters_set: (filters) =>
     setTimeout (=>
