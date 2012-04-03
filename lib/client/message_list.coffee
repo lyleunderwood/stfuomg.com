@@ -1,4 +1,4 @@
-class MessageList
+class MessageList extends Node
   constructor: (socket, options) ->
     @socket = socket
     @options = options
@@ -52,11 +52,21 @@ class MessageList
     @scroll_bottom()
 
   scroll_bottom: ->
-    gcs = global.getComputedStyle @list_node
-    @scroll_node.scrollTop = parseInt gcs.height
+    @scroll_node.scrollTop = @list_node.scrollHeight
 
   filters_set: (filters) =>
     setTimeout (=>
+
+      if filters.show_joinpart
+        @add_class 'show_joinpart'
+      else
+        @remove_class 'show_joinpart'
+
+      if filters.mediaonly
+        @add_class 'mediaonly'
+      else
+        @remove_class 'mediaonly'
+
       message.filter filters for message in @messages
       @scroll_bottom()
     ), 1

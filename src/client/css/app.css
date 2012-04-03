@@ -116,6 +116,31 @@ body, input, textarea {
   height: 100px;
 }
 
+/* filters */
+
+#message_list .message.joinpart {
+  display: none;
+}
+
+#message_list.show_joinpart .message.joinpart {
+  display: table-row;
+}
+
+#message_list.mediaonly .message,
+#message_list.mediaonly.show_joinpart .message.joinpart {
+  display: none;
+}
+
+#message_list.mediaonly .message.media {
+  display: table-row;
+}
+
+#message_list .message.filtered,
+#message_list.show_joinpart .message.filtered,
+#message_list.mediaonly .message.filtered {
+  display: none;
+}
+
 /* entry_form */
 
 #entry_form {

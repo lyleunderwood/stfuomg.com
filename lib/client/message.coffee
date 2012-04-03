@@ -1,4 +1,4 @@
-class Message
+class Message extends Node
   url_regex: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.\(\),@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g
 
   reference_regex: /\@(\w+)/
@@ -70,9 +70,15 @@ class Message
 
     @build_content()
 
+    @node.className += ' joinpart' if @is_joinpart()
+
     @node.className += ' reference' if @reference
 
     return @node
+
+  set_media: (media) ->
+    @media = media
+    @node.className += ' media' if @has_media()
 
   handle_reference: (content) ->
     return content if !@user_name?
@@ -83,10 +89,10 @@ class Message
     content
 
   hide: ->
-    @node.style.display = 'none'
+    @add_class 'filtered'
 
   show: ->
-    @node.style.display = 'table-row'
+    @remove_class 'filtered'
 
   is_joinpart: ->
     @server_event
@@ -95,9 +101,9 @@ class Message
     !!@media
 
   filter: (filters) ->
-    return @hide() if !filters.show_joinpart and @is_joinpart()
+    #return @hide() if !filters.show_joinpart and @is_joinpart()
 
-    return @hide() if filters.mediaonly and !@has_media()
+    #return @hide() if filters.mediaonly and !@has_media()
 
     if filters.keywords
       return @hide() for keyword in filters.keywords when @content.indexOf(keyword) is -1

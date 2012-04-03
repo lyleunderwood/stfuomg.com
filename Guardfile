@@ -9,7 +9,21 @@ group :client do
   guard :shell do
     watch(%r{^src/client/.+\.(coffee)}) do |path|
       `mkdir -p lib/client/js`
-      `coffee -c -j lib/client/js/client.js src/client/`
+
+      files = []
+      Dir.glob 'src/client/**/*.coffee' do |file|
+        files << file
+      end
+
+      media_file = files.delete "src/client/media.coffee"
+      files.unshift(media_file) if media_file
+
+      node_file = files.delete "src/client/node.coffee"
+      files.unshift(node_file) if node_file
+
+      file_list = files.join ' '
+
+      `coffee -c -j lib/client/js/client.js #{file_list}`
     end
   end
 
