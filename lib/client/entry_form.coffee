@@ -76,6 +76,22 @@ class EntryForm
       @uploader.cleared.add =>
         @upload_section.className = @upload_section.className.split('selected').join('')
 
+      @uploader.started.add =>
+        @disable()
+
+      @uploader.completed.add =>
+        @enable()
+
+  disable: ->
+    @disabled = true
+    @message_input.setAttribute 'disabled', 'disabled'
+    @send_button.setAttribute 'disabled', 'disabled'
+
+  enable: ->
+    @disabled = false
+    @message_input.removeAttribute 'disabled'
+    @send_button.removeAttribute 'disabled'
+
   set_color: (color) ->
     @color = color
     @name_input.style.backgroundColor = "rgb(#{color[0]}, #{color[1]}, #{color[2]})"
@@ -88,6 +104,8 @@ class EntryForm
     @message_input.focus()
 
   submit_message: ->
+    return null if @disabled
+
     text = @message_input.value
 
     has_upload_file = @uploader and @uploader.selected_file

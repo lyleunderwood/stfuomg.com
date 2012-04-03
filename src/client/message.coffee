@@ -4,13 +4,16 @@ class Message
   reference_regex: /\@(\w+)/
 
   constructor: (params, socket) ->
-    @id          = params.id
-    @content     = params.content
-    @author_name = params.author_name
-    @color       = params.color
-    @user_name   = params.user_name
-    @image       = params.image
-    @socket      = socket
+    @id           = params.id
+    @content      = params.content
+    @author_name  = params.author_name
+    @color        = params.color
+    @user_name    = params.user_name
+    @image        = params.image
+    @server_event = params.server_event
+    @socket       = socket
+
+    @media = null
 
     @reference_regex = new RegExp("\@(#{@user_name})") if @user_name?
 
@@ -78,6 +81,28 @@ class Message
       @reference = true
 
     content
+
+  hide: ->
+    @node.style.display = 'none'
+
+  show: ->
+    @node.style.display = 'table-row'
+
+  is_joinpart: ->
+    @server_event
+
+  has_media: ->
+    !!@media
+
+  filter: (filters) ->
+    return @hide() if !filters.show_joinpart and @is_joinpart()
+
+    return @hide() if filters.mediaonly and !@has_media()
+
+    if filters.keywords
+      return @hide() for keyword in filters.keywords when @content.indexOf(keyword) is -1
+
+    @show()
 
   @build: (content, options, socket, extra_params) ->
     image = if extra_params && extra_params.image then extra_params.image else null

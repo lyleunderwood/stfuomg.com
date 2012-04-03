@@ -26,15 +26,13 @@ module.exports = class FileReceiver extends EventEmitter
         @result_url = 'https://s3-us-west-1.amazonaws.com/omfgstfu-uploads/' + part.filename
         @emit 'end', @result_url
 
-      part.addListener 'data', (chunk) =>
+      part.on 'data', (chunk) =>
         @bytes_completed += chunk.length
         @emit 'progress', @bytes_completed / @upload_length * 100, @bytes_completed, @upload_length
         @aws_req.write chunk
 
-      part.addListener 'end', () =>
+      part.on 'end', () =>
         @aws_req.end()
-
-      @form.handlePart part
 
     @form.parse request, (error, fields, files) =>
       if error

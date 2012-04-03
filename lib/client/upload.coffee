@@ -53,13 +53,11 @@ class Upload
     @cancel_btn.addEventListener 'click', (e) =>
       @clear()
 
-    @socket.on 'upload_started', ->
+    @socket.on 'upload_started', =>
       @start()
-      console.log 'upload_started'
 
     @socket.on 'upload_progress', (e) =>
       @bar.style.width = e.percent + '%'
-      console.log e.percent
 
   valid_file: (file) ->
     return false if !file?
@@ -88,6 +86,7 @@ class Upload
 
   start: ->
     @progress_bar.style.display = 'block'
+    @started.dispatch()
 
   clear: ->
     @selected_file = null
@@ -140,4 +139,4 @@ class Upload
 
   @supported: ->
     return false unless XMLHttpRequest
-    !!(FileList && FileReader && FormData && (new XMLHttpRequest).upload)
+    !!(FileList && FormData && (new XMLHttpRequest).upload)

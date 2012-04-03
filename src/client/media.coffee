@@ -24,6 +24,7 @@ class Media extends Node
     @node = document.createElement 'div'
     @node.className = 'media'
     @message.content_node.appendChild @node
+    @message.media = @
 
     media_node = @build_media()
     @node.appendChild media_node

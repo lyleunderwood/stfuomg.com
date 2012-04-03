@@ -139,4 +139,4 @@ class Upload
 
   @supported: ->
     return false unless XMLHttpRequest
-    !!(FileList && FileReader && FormData && (new XMLHttpRequest).upload)
+    !!(FileList && FormData && (new XMLHttpRequest).upload)
