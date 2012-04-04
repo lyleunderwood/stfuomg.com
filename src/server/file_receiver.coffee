@@ -40,3 +40,14 @@ module.exports = class FileReceiver extends EventEmitter
 
   get_token: ->
     @token
+
+  @delete: (url, cb) ->
+    parts = url.split '/'
+    url = '/' + parts[parts.length - 1]
+
+    aws_client.deleteFile url, (error, response) ->
+      return cb error if error
+
+      return cb response if response.statusCode isnt 204
+
+      cb null, response

@@ -1,7 +1,11 @@
-redis = require('redis').createClient()
+redis = require('redis').createClient(process.env.REDIS_PORT, process.env.REDIS_HOST)
 sanitizer = require 'sanitizer'
 
+redis.auth(process.env.REDIS_PASS)
+
 module.exports.Message = class Message
+  @max_messages: 50
+
   constructor: (params) ->
 
     filter_content = (content) ->
@@ -15,7 +19,7 @@ module.exports.Message = class Message
 
       author.substr 0, 16
 
-    @id
+    @id           = params.id if params.id
     @content      = filter_content params.content
     @author_name  = filter_author params.author_name
     @author_ip    = params.author_ip
@@ -23,15 +27,17 @@ module.exports.Message = class Message
     @image        = params.image || ''
     @server_event = params.server_event || ''
 
+    @persisted = false
+
     return @
 
   save: (cb) ->
     redis.incr 'next_post_id', (error, id) =>
       throw error if error
 
-      @id = id
+      @id = id unless @id
 
-      redis.multi()
+      operation = redis.multi()
         .set("Message:#{@id}:content",      @content)
         .set("Message:#{@id}:author_name",  @author_name)
         .set("Message:#{@id}:author_ip",    @author_ip)
@@ -39,12 +45,47 @@ module.exports.Message = class Message
         .set("Message:#{@id}:image",        @image)
         .set("Message:#{@id}:color",        JSON.stringify @color)
         .lpush('messages', @id)
-        .exec (error) =>
-          throw error if error
 
-          cb error, @id
+      operation.incr('message_count') unless @persisted
+
+      operation.exec (error) =>
+        throw error if error
+
+        @persisted = true
+        cb error, @id
 
     return @
+
+  delete: (cb) ->
+    redis.multi()
+      .del("Message:#{@id}:content")
+      .del("Message:#{@id}:author_name")
+      .del("Message:#{@id}:author_ip")
+      .del("Message:#{@id}:server_event")
+      .del("Message:#{@id}:image")
+      .del("Message:#{@id}:color")
+      .lrem('messages', 1, @id)
+      .decr('message_count')
+      .exec (error) =>
+        throw error if error
+
+        @persisted = false
+        cb error, @
+
+  @delete: (id, cb) ->
+    redis.multi()
+      .del("Message:#{id}:content")
+      .del("Message:#{id}:author_name")
+      .del("Message:#{id}:author_ip")
+      .del("Message:#{id}:server_event")
+      .del("Message:#{id}:image")
+      .del("Message:#{id}:color")
+      .lrem('messages', 1, id)
+      .decr('message_count')
+      .exec (error) =>
+        throw error if error
+        cb null, id
+
 
   @get: (id, cb) ->
     message = new Message id: id
@@ -64,6 +105,8 @@ module.exports.Message = class Message
         message.color = JSON.parse result
       .exec (error) ->
         throw error if error
+
+        @persisted = true
         cb error, message
 
     null
@@ -71,7 +114,7 @@ module.exports.Message = class Message
   @all: (cb) ->
     messages = []
 
-    redis.lrange 'messages', 0, 50, (error, results) =>
+    redis.lrange 'messages', 0, Message.max_messages, (error, results) =>
       throw error if error
 
       expected = results.length
@@ -86,5 +129,37 @@ module.exports.Message = class Message
           messages.push message
 
           cb(null, messages) if completed >= expected
+
+    null
+
+  @prune: (cb) ->
+    redis.get 'message_count', (error, count) ->
+      return cb error if error
+
+      return cb null, null if count <= Message.max_messages
+
+      amount_to_remove = count - Message.max_messages
+
+      redis.lrange 'messages', amount_to_remove * -1, -1, (error, results) ->
+        return cb error if error
+
+        cb error, null if results.length is 0
+
+        expected = results.length
+        completed = 0
+
+        images_to_delete = []
+        for id in results
+          Message.get id, (error, message) ->
+            return cb error if error
+
+            images_to_delete.push message.image if message.image
+
+            message.delete (error, id) ->
+              return cb error if error
+
+              completed++
+
+              cb null, images_to_delete if completed >= expected
 
     null

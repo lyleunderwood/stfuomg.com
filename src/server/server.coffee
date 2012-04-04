@@ -1,14 +1,13 @@
 connect = require 'connect'
 sio = require 'socket.io'
-redis = require 'redis'
 Message = require('./message').Message
 FileReceiver = require './file_receiver'
 util = require 'util'
 fs = require 'fs'
 
-redis_client = redis.createClient()
-
 token_to_socket = {}
+
+pruning = false
 
 upload_middleware = (req, res, next) ->
   if req.url is '/upload' && req.method.toLowerCase() is 'post'
@@ -56,6 +55,22 @@ io.sockets.on 'connection', (socket) ->
 
     message.save (error, id) ->
       console.log "New message ID: #{id}"
+
+      process.nextTick ->
+        return null if pruning
+        pruning = true
+
+        Message.prune (error, images_to_delete) ->
+          pruning = false
+
+          return console.log 'failed to prune', error if error
+
+          return null unless images_to_delete
+
+          for image in images_to_delete
+            FileReceiver.delete image, (error, result) ->
+              console.log "failed to delete #{image}, #{error.statusCode}" if error
+              console.log 'successfully deleted', image
 
     io.sockets.emit 'messages', [message]
 
