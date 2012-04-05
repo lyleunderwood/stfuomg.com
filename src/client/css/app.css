@@ -205,6 +205,15 @@ body, input, textarea {
   position: relative;
 }
 
+#entry_form .section.upload .uploader .preview_icon {
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: 20px;
+  max-height: 20px;
+}
+
 #entry_form .section.message textarea {
   height: 30px;
   display: block;

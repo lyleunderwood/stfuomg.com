@@ -4,6 +4,7 @@ class Upload
     @drop_target = drop_target
     @build()
     @attach_events()
+    @windowUrl = window.URL || window.webkitURL
 
   build: ->
     @node = document.createElement 'div'
@@ -14,6 +15,10 @@ class Upload
 
     @size_node = document.createElement 'p'
     @size_node.className = 'size'
+
+    @preview_icon = new Image()
+    @preview_icon.className = 'preview_icon'
+    @node.appendChild @preview_icon
 
     @cancel_btn = document.createElement 'button'
     @cancel_btn.innerHTML = 'X'
@@ -75,11 +80,14 @@ class Upload
 
   set_selected_file: (file) ->
     return false unless @valid_file file
+
+    @preview_icon.src = @windowUrl.createObjectURL file if @windowUrl
+
     @selected_file = file
     @file_selected.dispatch(file)
 
     @name_node.innerHTML = file.name
-    @size_node.innerHTML = file.size
+    @size_node.innerHTML = (file.size / 1024).toFixed(2) + 'KB'
 
   set_token: (token) ->
     @token = token
