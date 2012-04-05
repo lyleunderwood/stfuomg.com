@@ -200,6 +200,11 @@ body, input, textarea {
   display: table-cell;
 }
 
+#entry_form .section.upload .uploader {
+  display: block;
+  position: relative;
+}
+
 #entry_form .section.message textarea {
   height: 30px;
   display: block;
@@ -214,7 +219,8 @@ body, input, textarea {
 }
 
 #entry_form .section.message .upload_progress_bar {
-  position: absolute;
+  position: relative;
+  margin-top: -40px;
   top: 0;
   left: 0;
   width: 100%;

@@ -54,7 +54,7 @@ class EntryForm
 
   attach_events: ->
     @message_input.addEventListener 'keypress', (e) =>
-      return null if e.charCode != 13 || e.shiftKey
+      return null if e.keyCode != 13 || e.shiftKey
       e.preventDefault()
 
       @submit_message()
@@ -63,7 +63,7 @@ class EntryForm
       @submit_message()
 
     @name_input.addEventListener 'keypress', (e) =>
-      return @focus() if e.charCode is 13
+      return @focus() if e.keyCode is 13
       setTimeout (=> @change_name()), 1
 
     @name_input.addEventListener 'change', (e) =>
