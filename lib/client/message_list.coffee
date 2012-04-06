@@ -26,10 +26,13 @@ class MessageList extends Node
 
     @resize()
 
+    @socket.emit 'get_messages', since: 400
+
     return @node
 
   attach_events: ->
     @socket.on 'messages', (messages) =>
+      console.log messages
       @add_message message for message in messages.reverse()
 
     window.addEventListener 'resize', => @resize()

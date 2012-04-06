@@ -45,7 +45,7 @@ io = sio.listen app
 io.sockets.on 'connection', (socket) ->
 
   socket.on 'get_messages', (params) ->
-    Message.all (error, messages) ->
+    Message.all params, (error, messages) ->
       socket.emit 'messages', messages
 
   socket.on 'message', (data) ->
