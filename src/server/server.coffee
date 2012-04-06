@@ -24,6 +24,8 @@ upload_middleware = (req, res, next) ->
   else
     next()
 
+console.log process.env['app_port']
+
 app = connect()
   .use(connect.logger 'dev')
   .use(upload_middleware)
