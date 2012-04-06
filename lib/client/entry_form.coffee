@@ -50,6 +50,9 @@ class EntryForm
 
       @node.insertBefore @upload_section, @message_section
 
+      @select_file_section = @uploader.select_button
+      @node.insertBefore @select_file_section, @send_section
+
     return @node
 
   attach_events: ->

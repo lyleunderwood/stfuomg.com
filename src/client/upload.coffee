@@ -23,6 +23,21 @@ class Upload
     @cancel_btn = document.createElement 'button'
     @cancel_btn.innerHTML = 'X'
 
+    @file_input = document.createElement 'input'
+    @file_input.type = 'file'
+    @file_input.accept = 'image/*'
+    @file_input.multiple = ''
+
+    @select_button = document.createElement 'div'
+    @select_button.id = 'upload_select_button'
+
+    @select_button_node = document.createElement 'button'
+    @select_button_node.innerHTML = '...'
+
+    @select_button.appendChild @file_input
+    @select_button.appendChild @select_button_node
+    @select_button.className = 'select_file section'
+
     @progress_bar = document.createElement 'progress'
     @progress_bar.setAttribute 'min', 0
     @progress_bar.setAttribute 'max', 100
@@ -55,6 +70,14 @@ class Upload
 
     @cancel_btn.addEventListener 'click', (e) =>
       @clear()
+
+    @select_button_node.addEventListener 'click', (e) =>
+      @file_input.click()
+
+    @file_input.addEventListener 'change', (e) =>
+      file = @file_input.files[0]
+      return false unless file
+      @set_selected_file file
 
   valid_file: (file) ->
     return false if !file?
