@@ -112,12 +112,13 @@ module.exports.Message = class Message
     null
 
   @all: (params, cb) ->
+    params = params || {}
     messages = []
 
     redis.lrange 'messages', 0, Message.max_messages, (error, results) =>
       throw error if error
 
-      if params.since and (idx = results.indexOf params.since + '') isnt -1
+      if params.since? and (idx = results.indexOf params.since + '') isnt -1
         results.splice idx, results.length - idx + 1
 
       expected = results.length

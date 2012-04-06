@@ -21,15 +21,6 @@ upload_middleware = (req, res, next) ->
 
       res.end()
 
-    receiver.on 'progress', (percent, transferred, total) ->
-      socket.emit 'upload_progress',
-        percent: percent
-        transferred: transferred
-        total: total
-
-    receiver.on 'start', ->
-      socket.emit 'upload_started'
-
   else
     next()
 

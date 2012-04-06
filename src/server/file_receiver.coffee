@@ -28,7 +28,6 @@ module.exports = class FileReceiver extends EventEmitter
 
       part.on 'data', (chunk) =>
         @bytes_completed += chunk.length
-        @emit 'progress', @bytes_completed / @upload_length * 100, @bytes_completed, @upload_length
         @aws_req.write chunk
 
       part.on 'end', () =>
