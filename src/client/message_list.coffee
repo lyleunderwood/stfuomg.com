@@ -26,6 +26,8 @@ class MessageList extends Node
 
     @resize()
 
+    @socket.emit 'get_messages'
+
     return @node
 
   attach_events: ->

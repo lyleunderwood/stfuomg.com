@@ -43,8 +43,10 @@ app = connect()
 io = sio.listen app
 
 io.sockets.on 'connection', (socket) ->
-  Message.all (error, messages) ->
-    socket.emit 'messages', messages
+
+  socket.on 'get_messages', (params) ->
+    Message.all (error, messages) ->
+      socket.emit 'messages', messages
 
   socket.on 'message', (data) ->
     data.author_ip = socket.handshake.address.address
