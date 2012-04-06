@@ -23,13 +23,11 @@ class Upload
     @cancel_btn = document.createElement 'button'
     @cancel_btn.innerHTML = 'X'
 
-    @progress_bar = document.createElement 'div'
+    @progress_bar = document.createElement 'progress'
+    @progress_bar.setAttribute 'min', 0
+    @progress_bar.setAttribute 'max', 100
+    @progress_bar.setAttribute 'value', 0
     @progress_bar.className = 'upload_progress_bar'
-
-    @bar = document.createElement 'div'
-    @bar.className = 'bar'
-
-    @progress_bar.appendChild @bar
 
     @node.appendChild @cancel_btn
     @node.appendChild @name_node
@@ -62,7 +60,8 @@ class Upload
       @start()
 
     @socket.on 'upload_progress', (e) =>
-      @bar.style.width = e.percent + '%'
+      return @progress_bar.removeAttribute 'value' if e.percent is 100
+      @progress_bar.setAttribute 'value', e.percent
 
   valid_file: (file) ->
     return false if !file?
@@ -98,7 +97,7 @@ class Upload
 
   clear: ->
     @selected_file = null
-    @bar.style.width = '0%'
+    @progress_bar.value = 0
     @progress_bar.style.display = 'none'
     @cleared.dispatch()
 
