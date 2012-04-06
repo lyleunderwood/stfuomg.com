@@ -1,3 +1,4 @@
 *.sublime-workspace
 env_vars
 node_modules
+.nodester.appconfig

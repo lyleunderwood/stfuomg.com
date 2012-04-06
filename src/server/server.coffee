@@ -29,7 +29,7 @@ app = connect()
   .use(upload_middleware)
   .use(connect.static 'lib/client')
   .use(connect.static 'images')
-  .listen process.env.PORT || 3001
+  .listen process.env['app_port'] || 3001
 
 io = sio.listen app
 
