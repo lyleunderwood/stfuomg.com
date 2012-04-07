@@ -30,7 +30,6 @@ app = connect()
   .use(connect.static __dirname + '/../client')
   .listen (process.env['app_port'] || 3001), ->
 
-
     io = sio.listen this
 
     io.sockets.on 'connection', (socket) ->
