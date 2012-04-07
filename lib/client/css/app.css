@@ -3,6 +3,10 @@
   padding: 0;
 }
 
+body {
+  overflow: hidden;
+}
+
 body, input, textarea {
   font-family: times;
   font-size: 12px;
@@ -119,6 +123,15 @@ body, input, textarea {
 
 #message_list .remember_line * {
   display: table-cell;
+}
+
+#message_list .lost_connection {
+  display: table-row;
+}
+
+#message_list .lost_connection * {
+  display: table-cell;
+  padding: 5px;
 }
 
 /* filter_pane */

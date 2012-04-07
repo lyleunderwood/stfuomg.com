@@ -1,8 +1,12 @@
 class MessageList extends Node
+  window_focused: null
+
   constructor: (socket, options) ->
     @socket = socket
     @options = options
     @messages = []
+
+    @window_focused = true
 
     @filter_pane = new FilterPane()
 
@@ -26,6 +30,13 @@ class MessageList extends Node
 
     @resize()
 
+    @lost_connection_node = document.createElement 'li'
+    @lost_connection_node.className = 'lost_connection'
+    @lost_connection_node.appendChild document.createElement 'div'
+    lost_message = document.createElement 'div'
+    @lost_connection_node.appendChild lost_message
+    lost_message.innerHTML = 'Your connection was lost.'
+
     @socket.emit 'get_messages'
 
     return @node
@@ -34,32 +45,45 @@ class MessageList extends Node
     @socket.on 'messages', (messages) =>
       @add_message message for message in messages.reverse()
 
+    @socket.on 'connect', =>
+      @list_node.removeChild @lost_connection_node if @lost_connection_node.parentNode
+
+    @socket.on 'disconnect', =>
+      @list_node.appendChild @lost_connection_node
+      @scroll_bottom()
+
     window.addEventListener 'resize', => @resize()
 
     Media.item_loaded.add => @scroll_bottom()
 
     @filter_pane.changed.add @filters_set
 
-    if @visibility_support()
-      @remember_line = document.createElement 'div'
-      @remember_line.className = 'remember_line'
+    window.addEventListener 'focus', =>
+      @window_focused = true
 
-      @remember_line.appendChild document.createElement 'div'
-      @remember_line.appendChild document.createElement 'div'
+    window.addEventListener 'blur', =>
+      @window_focused = false
 
-      @place_remember_line() if @is_hidden()
+    @remember_line = document.createElement 'div'
+    @remember_line.className = 'remember_line'
 
-      @on_visibility_changed (e) =>
-        if @is_hidden()
-          @place_remember_line()
-        else
-          @check_remember_line()
+    @remember_line.appendChild document.createElement 'div'
+    @remember_line.appendChild document.createElement 'div'
+
+    @place_remember_line() if @is_hidden()
+
+    @on_visibility_changed (e) =>
+      if @is_hidden()
+        @place_remember_line()
+      else
+        @check_remember_line()
 
   place_remember_line: ->
     @list_node.appendChild @remember_line
     @scroll_bottom
 
   check_remember_line: ->
+    return null unless @remember_line.parentNode
     # this is kind of crazy. if any of @remember_lines next siblings are
     # displayed then it means there are new unfiltered messages since the last
     # time the page was viewed.
@@ -71,7 +95,7 @@ class MessageList extends Node
     @list_node.removeChild @remember_line
 
   is_hidden: ->
-    document[@visibility_support()]
+    ((@visibility_support() and document[@visibility_support()]) or !@window_focused) or (!@visibility_support() and !@window_focused)
 
   visibility_support: ->
     impls = "hidden msHidden mozHidden webkitHidden".split ' '
@@ -87,7 +111,10 @@ class MessageList extends Node
 
     event = event_map[impl]
 
-    document.addEventListener event, cb
+    document.addEventListener event, cb if event
+
+    window.addEventListener 'focus', (-> setTimeout cb, 1)
+    window.addEventListener 'blur', (-> setTimeout cb, 1)
 
   add_message: (message) ->
     message.user_name = @options.name

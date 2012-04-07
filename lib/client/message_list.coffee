@@ -26,6 +26,13 @@ class MessageList extends Node
 
     @resize()
 
+    @lost_connection_node = document.createElement 'li'
+    @lost_connection_node.className = 'lost_connection'
+    @lost_connection_node.appendChild document.createElement 'div'
+    lost_message = document.createElement 'div'
+    @lost_connection_node.appendChild lost_message
+    lost_message.innerHTML = 'Your connection was lost.'
+
     @socket.emit 'get_messages'
 
     return @node
@@ -33,6 +40,14 @@ class MessageList extends Node
   attach_events: ->
     @socket.on 'messages', (messages) =>
       @add_message message for message in messages.reverse()
+
+    @socket.on 'connect', =>
+      @list_node.removeChild @lost_connection_node if @lost_connection_node.parentNode
+
+    @socket.on 'disconnect', =>
+      console.log 'disconnect'
+      @list_node.appendChild @lost_connection_node
+      @scroll_bottom()
 
     window.addEventListener 'resize', => @resize()
 
@@ -50,7 +65,6 @@ class MessageList extends Node
       @place_remember_line() if @is_hidden()
 
       @on_visibility_changed (e) =>
-        console.log @is_hidden()
         if @is_hidden()
           @place_remember_line()
         else
