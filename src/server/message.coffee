@@ -27,6 +27,8 @@ module.exports.Message = class Message
     @image        = params.image || ''
     @server_event = params.server_event || ''
 
+    @sent_at      = params.sent_at || null
+
     @persisted = false
 
     return @
@@ -44,6 +46,7 @@ module.exports.Message = class Message
         .set("Message:#{@id}:server_event", @server_event)
         .set("Message:#{@id}:image",        @image)
         .set("Message:#{@id}:color",        JSON.stringify @color)
+        .set("Message:#{@id}:sent_at",      new Date())
         .lpush('messages', @id)
 
       operation.incr('message_count') unless @persisted
@@ -99,10 +102,12 @@ module.exports.Message = class Message
         message.author_ip = result
       .get "Message:#{id}:server_event", (error, result) ->
         message.server_event = result
-      .get "Message:#{id}:image", (error, result) ->
+      .get "Message:#{id}:image",        (error, result) ->
         message.image = result
       .get "Message:#{id}:color",        (error, result) ->
         message.color = JSON.parse result
+      .get "Message:#{id}:sent_at",      (error, result) ->
+        message.sent_at = new Date(result)
       .exec (error) ->
         throw error if error
 

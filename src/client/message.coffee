@@ -11,6 +11,7 @@ class Message extends Node
     @user_name    = params.user_name
     @image        = params.image
     @server_event = params.server_event
+    @sent_at      = if params.sent_at then new Date(params.sent_at) else new Date()
     @socket       = socket
 
     @media = null
@@ -28,6 +29,7 @@ class Message extends Node
       author_name: @author_name
       color:       @color
       image:       @image
+      sent_at:     @sent_at
     }
 
   send: ->
@@ -70,11 +72,22 @@ class Message extends Node
 
     @build_content()
 
+    @time_node = document.createElement 'div'
+    @time_node.className = 'time'
+    @time_wrapper = document.createElement 'span'
+    @time_wrapper.className = 'time_wrapper'
+    @time_wrapper.appendChild @time_node
+    @node.appendChild @time_wrapper
+    @time_node.innerHTML = @format_date @sent_at if @sent_at
+
     @node.className += ' joinpart' if @is_joinpart()
 
     @node.className += ' reference' if @reference
 
     return @node
+
+  format_date: (dt) ->
+    dt = new Date(Date.parse(dt.toString())).toLocaleTimeString()
 
   is_filtered: ->
     @node.style.display isnt 'none'
