@@ -24,13 +24,10 @@ upload_middleware = (req, res, next) ->
   else
     next()
 
-console.log process.env['app_port']
-
 app = connect()
   .use(connect.logger 'dev')
   .use(upload_middleware)
-  .use(connect.static 'lib/client')
-  .use(connect.static 'images')
+  .use(connect.static __dirname + 'lib/client')
   .listen (process.env['app_port'] || 3001), ->
 
 
