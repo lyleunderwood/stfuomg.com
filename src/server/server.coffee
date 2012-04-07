@@ -31,75 +31,76 @@ app = connect()
   .use(upload_middleware)
   .use(connect.static 'lib/client')
   .use(connect.static 'images')
-  .listen process.env['app_port'] || 3001
+  .listen (process.env['app_port'] || 3001), ->
 
-io = sio.listen app
 
-io.sockets.on 'connection', (socket) ->
+    io = sio.listen this
 
-  socket.on 'get_messages', (params) ->
-    Message.all params, (error, messages) ->
-      socket.emit 'messages', messages
+    io.sockets.on 'connection', (socket) ->
 
-  socket.on 'message', (data) ->
-    data.author_ip = socket.handshake.address.address
+      socket.on 'get_messages', (params) ->
+        Message.all params, (error, messages) ->
+          socket.emit 'messages', messages
 
-    return if !data.content? || data.content.match /^\s*$/ != null
+      socket.on 'message', (data) ->
+        data.author_ip = socket.handshake.address.address
 
-    message = new Message data
+        return if !data.content? || data.content.match /^\s*$/ != null
 
-    message.save (error, id) ->
-      console.log "New message ID: #{id}"
+        message = new Message data
 
-      process.nextTick ->
-        return null if pruning
-        pruning = true
+        message.save (error, id) ->
+          console.log "New message ID: #{id}"
 
-        Message.prune (error, images_to_delete) ->
-          pruning = false
+          process.nextTick ->
+            return null if pruning
+            pruning = true
 
-          return console.log 'failed to prune', error if error
+            Message.prune (error, images_to_delete) ->
+              pruning = false
 
-          return null unless images_to_delete
+              return console.log 'failed to prune', error if error
 
-          for image in images_to_delete
-            FileReceiver.delete image, (error, result) ->
-              console.log "failed to delete #{image}, #{error.statusCode}" if error
-              console.log 'successfully deleted', image
+              return null unless images_to_delete
 
-    io.sockets.emit 'messages', [message]
+              for image in images_to_delete
+                FileReceiver.delete image, (error, result) ->
+                  console.log "failed to delete #{image}, #{error.statusCode}" if error
+                  console.log 'successfully deleted', image
 
-  socket.on 'create_session', (data, cb) ->
-    token = data.token || create_session_token()
-    cb
-      token: token
-      color: data.color || create_color()
+        io.sockets.emit 'messages', [message]
 
-    token_to_socket[token] = socket
+      socket.on 'create_session', (data, cb) ->
+        token = data.token || create_session_token()
+        cb
+          token: token
+          color: data.color || create_color()
 
-    socket.set 'options', data
+        token_to_socket[token] = socket
 
-    connection_message = new Message
-      content:      data.name + " connected."
-      author_name:  "Server"
-      server_event: true
+        socket.set 'options', data
 
-    io.sockets.emit 'messages', [connection_message]
+        connection_message = new Message
+          content:      data.name + " connected."
+          author_name:  "Server"
+          server_event: true
 
-    connection_message.save ->
+        io.sockets.emit 'messages', [connection_message]
 
-  socket.on 'disconnect', ->
-    socket.get 'options', (error, data) ->
-      name = if data? and data.name? then data.name else 'Anonymous'
+        connection_message.save ->
 
-      disconnect_message = new Message
-        content: "#{name} disconnected."
-        author_name: 'Server'
-        server_event: true
+      socket.on 'disconnect', ->
+        socket.get 'options', (error, data) ->
+          name = if data? and data.name? then data.name else 'Anonymous'
 
-      io.sockets.emit 'messages', [disconnect_message]
+          disconnect_message = new Message
+            content: "#{name} disconnected."
+            author_name: 'Server'
+            server_event: true
 
-      disconnect_message.save ->
+          io.sockets.emit 'messages', [disconnect_message]
+
+          disconnect_message.save ->
 
 create_color = ->
   parts = []

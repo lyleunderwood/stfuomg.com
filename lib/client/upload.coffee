@@ -71,7 +71,7 @@ class Upload
     @cancel_btn.addEventListener 'click', (e) =>
       @clear()
 
-    @select_button_node.addEventListener 'mousedown', (e) =>
+    @select_button_node.addEventListener 'click', (e) =>
       @file_input.click()
 
     @file_input.addEventListener 'change', (e) =>
