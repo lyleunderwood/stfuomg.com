@@ -47,12 +47,29 @@ class MessageList extends Node
       @remember_line.appendChild document.createElement 'div'
       @remember_line.appendChild document.createElement 'div'
 
+      @place_remember_line() if @is_hidden()
+
       @on_visibility_changed (e) =>
         console.log @is_hidden()
-        @place_remember_line() if @is_hidden()
+        if @is_hidden()
+          @place_remember_line()
+        else
+          @check_remember_line()
 
   place_remember_line: ->
     @list_node.appendChild @remember_line
+    @scroll_bottom
+
+  check_remember_line: ->
+    # this is kind of crazy. if any of @remember_lines next siblings are
+    # displayed then it means there are new unfiltered messages since the last
+    # time the page was viewed.
+    node = @remember_line
+    while node = node.nextSibling
+      gcs = window.getComputedStyle node
+      return null if gcs.display isnt 'none'
+
+    @list_node.removeChild @remember_line
 
   is_hidden: ->
     document[@visibility_support()]

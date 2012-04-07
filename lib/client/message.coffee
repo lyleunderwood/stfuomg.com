@@ -76,6 +76,9 @@ class Message extends Node
 
     return @node
 
+  is_filtered: ->
+    @node.style.display isnt 'none'
+
   set_media: (media) ->
     @media = media
     @node.className += ' media' if @has_media()

@@ -77,11 +77,11 @@ app = connect()
         socket.set 'options', data
 
         connection_message = new Message
-          content:      data.name + " connected."
+          content:      (data.name || 'Anonymous') + " connected."
           author_name:  "Server"
           server_event: true
 
-        io.sockets.emit 'messages', [connection_message]
+        socket.broadcast.emit 'messages', [connection_message]
 
         connection_message.save ->
 
@@ -94,7 +94,7 @@ app = connect()
             author_name: 'Server'
             server_event: true
 
-          io.sockets.emit 'messages', [disconnect_message]
+          socket.broadcast.emit 'messages', [disconnect_message]
 
           disconnect_message.save ->
 

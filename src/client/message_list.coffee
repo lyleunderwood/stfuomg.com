@@ -50,7 +50,6 @@ class MessageList extends Node
       @place_remember_line() if @is_hidden()
 
       @on_visibility_changed (e) =>
-        console.log @is_hidden()
         if @is_hidden()
           @place_remember_line()
         else
