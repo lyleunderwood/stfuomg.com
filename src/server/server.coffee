@@ -27,7 +27,7 @@ upload_middleware = (req, res, next) ->
 app = connect()
   .use(connect.logger 'dev')
   .use(upload_middleware)
-  .use(connect.static __dirname + 'lib/client')
+  .use(connect.static __dirname + '/../client')
   .listen (process.env['app_port'] || 3001), ->
 
 
