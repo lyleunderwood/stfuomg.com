@@ -37,6 +37,13 @@ class MessageList extends Node
     @lost_connection_node.appendChild lost_message
     lost_message.innerHTML = 'Your connection was lost.'
 
+    @remember_line = document.createElement 'div'
+    @remember_line.className = 'remember_line'
+
+    @remember_line.appendChild document.createElement 'div'
+    @remember_line.appendChild document.createElement 'div'
+    @remember_line.appendChild document.createElement 'div'
+
     @socket.emit 'get_messages'
 
     return @node
@@ -63,12 +70,6 @@ class MessageList extends Node
 
     window.addEventListener 'blur', =>
       @window_focused = false
-
-    @remember_line = document.createElement 'div'
-    @remember_line.className = 'remember_line'
-
-    @remember_line.appendChild document.createElement 'div'
-    @remember_line.appendChild document.createElement 'div'
 
     @place_remember_line() if @is_hidden()
 

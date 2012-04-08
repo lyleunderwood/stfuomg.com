@@ -87,14 +87,7 @@ class Message extends Node
     return @node
 
   format_date: (dt) ->
-    dt = new Date(dt).toLocaleString().substr 0, 16
-
-    hour = dt.substr -5, 2
-    ampm = if hour < 12 then ' AM' else ' PM'
-    hour -= 12 if hour > 12
-    hour = 12 if hour == 0
-    console.log hour, dt.substr(13), ampm
-    hour + ':' + dt.substr(13) + ampm
+    dt = new Date(Date.parse(dt.toString())).toLocaleTimeString()
 
   is_filtered: ->
     @node.style.display isnt 'none'
