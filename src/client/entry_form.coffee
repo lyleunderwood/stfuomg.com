@@ -47,7 +47,7 @@ class EntryForm
       @upload_section.appendChild @uploader.node
 
       @uploader.uri_added.add (uri) =>
-        @message_input.innerHTML += uri
+        @message_input.value += uri
 
       @message_section.appendChild @uploader.progress_bar
 
