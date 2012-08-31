@@ -46,6 +46,9 @@ class EntryForm
       @uploader = new Upload(document.body, @socket)
       @upload_section.appendChild @uploader.node
 
+      @uploader.uri_added.add (uri) =>
+        @message_input.innerHTML += uri
+
       @message_section.appendChild @uploader.progress_bar
 
       @node.insertBefore @upload_section, @message_section

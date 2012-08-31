@@ -66,7 +66,10 @@ class Upload
 
       file = files[0]
 
-      @set_selected_file file
+      if file
+        @set_selected_file file
+      else if uri = dt.getData('text/uri-list') && typeof uri == 'string'
+        @add_selected_uri
 
     @cancel_btn.addEventListener 'click', (e) =>
       @clear()
@@ -103,6 +106,10 @@ class Upload
 
     @name_node.innerHTML = file.name
     @size_node.innerHTML = (file.size / 1024).toFixed(2) + 'KB'
+
+
+  add_selected_uri: (uri) ->
+    @uri_added.dispatch(uri)
 
   set_token: (token) ->
     @token = token
@@ -157,6 +164,8 @@ class Upload
 
 
   file_selected: new signals.Signal
+
+  uri_added: new signals.Signal
 
   cleared: new signals.Signal
 
