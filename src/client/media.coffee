@@ -1,3 +1,5 @@
+signals = require 'signals'
+
 class Media extends Node
   constructor: (url, message) ->
     @url = Media.html_decode url

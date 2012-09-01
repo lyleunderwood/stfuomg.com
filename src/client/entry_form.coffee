@@ -1,3 +1,5 @@
+signals = require 'signals'
+
 class EntryForm
   constructor: (socket, name) ->
     @name = name || "Anonymous"

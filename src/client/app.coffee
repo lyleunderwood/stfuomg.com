@@ -1,3 +1,5 @@
+store = require 'store'
+
 class App
   constructor: ->
     @node = document.body

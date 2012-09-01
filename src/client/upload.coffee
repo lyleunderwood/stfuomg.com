@@ -1,3 +1,5 @@
+signals = require 'signals'
+
 class Upload
   constructor: (drop_target, socket) ->
     @socket = socket

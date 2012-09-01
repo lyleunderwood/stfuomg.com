@@ -1,3 +1,5 @@
+signals = require 'signals'
+
 class FilterPane
   constructor: ->
     @build()

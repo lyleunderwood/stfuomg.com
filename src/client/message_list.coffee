@@ -1,3 +1,5 @@
+tinycon = require 'tinycon/tinycon'
+
 class MessageList extends Node
   window_focused: null
 
@@ -5,6 +7,7 @@ class MessageList extends Node
     @socket = socket
     @options = options
     @messages = []
+    @messages_while_away = 0
 
     @window_focused = true
 
@@ -51,6 +54,7 @@ class MessageList extends Node
   attach_events: ->
     @socket.on 'messages', (messages) =>
       @add_message message for message in messages.reverse()
+      @messages_added messages
 
     @socket.on 'connect', =>
       @list_node.removeChild @lost_connection_node if @lost_connection_node.parentNode
@@ -65,11 +69,9 @@ class MessageList extends Node
 
     @filter_pane.changed.add @filters_set
 
-    window.addEventListener 'focus', =>
-      @window_focused = true
+    window.addEventListener 'focus', => @focused()
 
-    window.addEventListener 'blur', =>
-      @window_focused = false
+    window.addEventListener 'blur', => @blurred()
 
     @place_remember_line() if @is_hidden()
 
@@ -124,6 +126,19 @@ class MessageList extends Node
     @list_node.appendChild message.build()
     message.filter @filter_pane.get_filters()
     @scroll_bottom()
+
+  messages_added: (messages) ->
+    if !@window_focused
+      @messages_while_away += messages.length
+      tinycon.setBubble @messages_while_away
+
+  focused: () ->
+    @window_focused = true
+    @messages_while_away = 0
+    tinycon.setBubble 0
+
+  blurred: () ->
+    @window_focused = false
 
   resize: ->
     @node.style.height = window.innerHeight - 40 + 'px'
