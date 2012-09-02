@@ -1,4 +1,6 @@
 #!/bin/bash
+coffee -c -o lib/server \
+  src/server/* && \
 coffee -c -j lib/client/js/client.js \
   src/client/node.coffee  \
   src/client/media.coffee \

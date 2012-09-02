@@ -1,4 +1,5 @@
 connect = require 'connect'
+gzip = require 'gzippo'
 sio = require 'socket.io'
 Message = require('./message').Message
 FileReceiver = require './file_receiver'
@@ -24,10 +25,13 @@ upload_middleware = (req, res, next) ->
   else
     next()
 
+two_days = 2*24*60*60*1000
+
 app = connect()
+  .use(gzip.compress())
   .use(connect.logger 'dev')
   .use(upload_middleware)
-  .use(connect.static __dirname + '/../client')
+  .use(connect.static __dirname + '/../client', maxAge: two_days)
   .listen (process.env['app_port'] || 3001), ->
 
     io = sio.listen this
