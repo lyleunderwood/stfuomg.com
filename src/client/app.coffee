@@ -1,4 +1,5 @@
 store = require 'store'
+io = require 'socket.io-client'
 
 class App
   constructor: ->

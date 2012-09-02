@@ -28,6 +28,7 @@
     "tinycon": "0.0.1",
     "signals": "0.8.1",
     "store": "1.3.3",
+    "socket.io-client": "0.9.10",
     "browserify": "1.15.4"
   },
   "bundleDependencies": [
