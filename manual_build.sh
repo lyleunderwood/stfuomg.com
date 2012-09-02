@@ -11,4 +11,7 @@ coffee -c -j lib/client/js/client.js \
   src/client/message.coffee && \
   \
 ./node_modules/.bin/browserify lib/client/js/client.js -o lib/client/js/bundle.js && \
+./node_modules/.bin/uglifyjs lib/client/js/bundle.js >lib/client/js/_bundle.js &&\
+mv lib/client/js/_bundle.js lib/client/js/bundle.js &&\
+\
 node lib/server/server.js

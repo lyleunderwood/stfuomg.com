@@ -29,6 +29,7 @@
     "signals": "0.8.1",
     "store": "1.3.3",
     "socket.io-client": "0.9.10",
+    "uglify-js": "1.3.3",
     "browserify": "1.15.4"
   },
   "bundleDependencies": [
