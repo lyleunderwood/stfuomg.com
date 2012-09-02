@@ -69,17 +69,10 @@ class MessageList extends Node
 
     @filter_pane.changed.add @filters_set
 
-    window.addEventListener 'focus', => @focused()
-
-    window.addEventListener 'blur', => @blurred()
-
     @place_remember_line() if @is_hidden()
 
     @on_visibility_changed (e) =>
-      if @is_hidden()
-        @place_remember_line()
-      else
-        @check_remember_line()
+      if @is_hidden(e) then @blurred() else @focused()
 
   place_remember_line: ->
     @list_node.appendChild @remember_line
@@ -97,8 +90,16 @@ class MessageList extends Node
 
     @list_node.removeChild @remember_line
 
-  is_hidden: ->
-    ((@visibility_support() and document[@visibility_support()]) or !@window_focused) or (!@visibility_support() and !@window_focused)
+  is_hidden: (e) ->
+    if e and e.type == 'blur'
+      @window_focused = false
+    else if e and e.type == 'focus'
+      @window_focused = true
+    else
+      if @visibility_support()
+        @window_focused = !document[@visibility_support()]
+
+    !@window_focused
 
   visibility_support: ->
     impls = "hidden msHidden mozHidden webkitHidden".split ' '
@@ -114,10 +115,15 @@ class MessageList extends Node
 
     event = event_map[impl]
 
-    document.addEventListener event, cb if event
+    return document.addEventListener event, cb if event
 
-    window.addEventListener 'focus', (-> setTimeout cb, 1)
-    window.addEventListener 'blur', (-> setTimeout cb, 1)
+    window.addEventListener 'focus', ->
+      args = arguments
+      setTimeout (-> cb.apply null, args), 1
+
+    window.addEventListener 'blur', ->
+      args = arguments
+      setTimeout (-> cb.apply null, args), 1
 
   add_message: (message) ->
     message.user_name = @options.name
@@ -128,17 +134,17 @@ class MessageList extends Node
     @scroll_bottom()
 
   messages_added: (messages) ->
-    if !@window_focused
+    if @is_hidden()
       @messages_while_away += messages.length
       tinycon.setBubble @messages_while_away
 
   focused: () ->
-    @window_focused = true
     @messages_while_away = 0
     tinycon.setBubble 0
+    @check_remember_line()
 
   blurred: () ->
-    @window_focused = false
+    @place_remember_line()
 
   resize: ->
     @node.style.height = window.innerHeight - 40 + 'px'
