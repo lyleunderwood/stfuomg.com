@@ -20,6 +20,7 @@ class TwitterMedia extends Media
 
     jsonp "//api.twitter.com/1/statuses/oembed.json?id=#{@tweet_id}&include_entities=true&omit_script=true&callback=%3F", (res) =>
       @container.innerHTML = res.html
+      Media.item_loaded.dispatch @
 
     @container
 
