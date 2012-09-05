@@ -1,6 +1,8 @@
 signals = require 'signals'
 
 class Media extends Node
+  has_zoomer: true
+
   constructor: (url, message) ->
     @url = Media.html_decode url
     @message = message
@@ -14,7 +16,7 @@ class Media extends Node
     media_node = @build_media()
     @node.appendChild media_node
 
-    @build_zoomer()
+    @build_zoomer() if @has_zoomer
 
     Media.item_loaded.dispatch @
 

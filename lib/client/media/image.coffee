@@ -37,7 +37,7 @@ class ImageMedia extends Media
     @zoomer.style.right = 'auto'
 
   @is_match: (url)->
-    !!url.match /\/[^\/]+\.(png|jpg|jpeg|gif)(\?.*)?$/i
+    !!url.match /\/[^\/]+\.(png|jpg|jpeg|gif)(\?.*)?/i
 
 
 Media.add_type ImageMedia
