@@ -90,6 +90,12 @@ class EntryForm
       @uploader.completed.add =>
         @enable()
 
+      @uploader.stopped.add =>
+        @enable()
+
+      @uploader.error.add =>
+        @enable()
+
   disable: ->
     @disabled = true
     @message_input.setAttribute 'disabled', 'disabled'
@@ -124,9 +130,15 @@ class EntryForm
       @uploader.upload()
       cb = (image_path) =>
         @uploader.completed.remove cb
+        @uploader.error.remove err_cb
         @perform_submit(image: image_path)
 
+      err_cb = =>
+        @uploader.completed.remove cb
+        @uploader.error.remove err_cb
+
       @uploader.completed.add cb
+      @uploader.error.add err_cb
 
     else if valid
       @perform_submit()

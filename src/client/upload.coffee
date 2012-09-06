@@ -27,7 +27,7 @@ class Upload
 
     @file_input = document.createElement 'input'
     @file_input.type = 'file'
-    @file_input.accept = 'image/*'
+    @file_input.accept = 'image/*,audio/*'
     @file_input.multiple = ''
 
     @select_button = document.createElement 'div'
@@ -85,18 +85,7 @@ class Upload
       @set_selected_file file
 
   valid_file: (file) ->
-    return false if !file?
-
-    valid_types = [
-      "image/jpg",
-      "image/jpeg",
-      "image/png",
-      "image/gif"
-    ]
-
-    return false if valid_types.indexOf(file.type) is -1
-
-    true
+    file && file.type.match(/^(image)|(audio)\//)
 
   set_selected_file: (file) ->
     return false unless @valid_file file
@@ -125,6 +114,11 @@ class Upload
     @progress_bar.style.display = 'none'
     @cleared.dispatch()
 
+  stop: ->
+    @progress_bar.value = 0
+    @progress_bar.style.display = 'none'
+    @stopped.dispatch()
+
   upload: ->
     return false unless @selected_file
 
@@ -134,8 +128,16 @@ class Upload
 
     xhr = new XMLHttpRequest
 
+    xhr.onreadystatechange = (e) =>
+      if xhr.readyState >= 3 && xhr.status && xhr.status >= 400
+        response = JSON.parse xhr.responseText
+        @error.dispatch response
+        @stop()
+
+
     xhr.upload.addEventListener 'progress', (e) =>
       percent = e.loaded / e.totalSize * 100
+      console.log e, percent
 
       return @progress_bar.removeAttribute 'value' if percent is 100
 
@@ -148,6 +150,11 @@ class Upload
         response = JSON.parse xhr.responseText
         @completed.dispatch response.path
         @clear()
+      else if xhr.status <= 400 || xhr.status < 200
+        response = JSON.parse xhr.responseText
+        @error.dispatch response
+        @stop()
+
 
     xhr.addEventListener 'error', (e) ->
       console.log 'error', e
@@ -172,9 +179,13 @@ class Upload
 
   started: new signals.Signal
 
+  stopped: new signals.Signal
+
   progress: new signals.Signal
 
   completed: new signals.Signal
+
+  error: new signals.Signal
 
   @supported: ->
     return false unless XMLHttpRequest

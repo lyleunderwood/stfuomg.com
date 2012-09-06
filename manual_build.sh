@@ -9,6 +9,7 @@ coffee -c -j lib/client/js/client.js \
   src/client/filter_pane.coffee \
   src/client/upload.coffee \
   src/client/entry_form.coffee \
+  src/client/audio_player.coffee \
   src/client/message_list.coffee \
   src/client/message.coffee && \
   \

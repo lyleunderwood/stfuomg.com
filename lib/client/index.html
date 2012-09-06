@@ -4,7 +4,17 @@
 
 <link href="/css/app.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="/js/bundle.min.js"></script>
+<script type="text/javascript" src="/js/bundle.js"></script>
+
+<script type="text/javascript" src="/js/soundmanager2/script/soundmanager2-nodebug-jsmin.js"></script>
+
+<script>
+soundManager.setup({
+  // where to find flash SWFs, as needed
+  url: '/js/soundmanager2/swf/'
+  //preferFlash: false
+});
+</script>
 
 <!--
   apparently the body tag doesn't get automatically created in mobile safari

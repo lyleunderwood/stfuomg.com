@@ -22,6 +22,10 @@ upload_middleware = (req, res, next) ->
 
       res.end()
 
+    receiver.on 'error', (error) ->
+      res.writeHead error.code || 406, 'Content-Type': 'application/json'
+      res.write JSON.stringify error
+
   else
     next()
 
