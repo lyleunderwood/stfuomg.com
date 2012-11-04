@@ -97,7 +97,7 @@ body, input, textarea {
   width: auto;
   height: auto;
   max-height: none;
-  max-width: none;
+  max-width: 100%;
 }
 
 #message_list .message .content .media.zoomed.youtube iframe,
@@ -116,6 +116,11 @@ body, input, textarea {
 #message_list .message .media {
   position: relative;
   max-width: 150px;
+}
+
+#message_list .message .media.zoomed.image {
+  max-width: 100%;
+  float: left;
 }
 
 #message_list .message .media.not_zoomable {
