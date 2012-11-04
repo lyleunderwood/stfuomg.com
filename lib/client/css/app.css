@@ -109,8 +109,8 @@ body, input, textarea {
 
 #message_list .message .content .media.zoomed.youtube .zoomer,
 #message_list .message .content .media.zoomed.vimeo .zoomer {
-  left: 620px;
-  right: auto;
+  left: 'auto';
+  right: 0;
 }
 
 #message_list .message .media {
@@ -118,7 +118,7 @@ body, input, textarea {
   max-width: 150px;
 }
 
-#message_list .message .media.zoomed.image {
+#message_list .message .media.zoomed {
   max-width: 100%;
   float: left;
 }
