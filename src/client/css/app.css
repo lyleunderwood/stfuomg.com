@@ -77,33 +77,38 @@ body, input, textarea {
 }
 
 #message_list .message .content .media.youtube iframe,
+#message_list .message .content .media.vimeo iframe,
 #message_list .message .content .media.image img {
   max-height: 150px;
   max-width: 150px;
   border: 0;
 }
 
-#message_list .message .content .media.youtube iframe {
+#message_list .message .content .media.youtube iframe,
+#message_list .message .content .media.vimeo iframe {
   width: 150px;
   height: 150px;
   display: block;
 }
 
 #message_list .message .content .media.zoomed.image img,
-#message_list .message .content .media.zoomed.youtube iframe {
+#message_list .message .content .media.zoomed.youtube iframe,
+#message_list .message .content .media.zoomed.vimeo iframe {
   width: auto;
   height: auto;
   max-height: none;
   max-width: none;
 }
 
-#message_list .message .content .media.zoomed.youtube iframe {
+#message_list .message .content .media.zoomed.youtube iframe,
+#message_list .message .content .media.zoomed.vimeo iframe {
   width: 640px;
   height: 480px;
 }
 
 
-#message_list .message .content .media.zoomed.youtube .zoomer {
+#message_list .message .content .media.zoomed.youtube .zoomer,
+#message_list .message .content .media.zoomed.vimeo .zoomer {
   left: 620px;
   right: auto;
 }
