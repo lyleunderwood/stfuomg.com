@@ -1,5 +1,5 @@
 class YoutubeMedia extends Media
-  @regex: /http:\/\/\w{0,3}.?youtube+\.\w{2,3}\/watch\?.*v=([\w-]{11})(\&.*)?/
+  @regex: /https?:\/\/\w{0,3}.?youtube+\.\w{2,3}\/watch\?.*v=([\w-]{11})(\&.*)?/
 
   start: ->
     @build()
