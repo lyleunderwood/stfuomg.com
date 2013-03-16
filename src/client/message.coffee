@@ -1,5 +1,5 @@
 class Message extends Node
-  url_regex: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.\(\),@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g
+  url_regex: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.\(\),@?^=%&amp;:\/~\+#\!]*[\w\-\@?^=%&amp;\/~\+#\!])?/g
 
   reference_regex: /\@(\w+)/
 
