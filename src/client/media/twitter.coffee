@@ -32,4 +32,4 @@ class TwitterMedia extends Media
     !!url.match @regex
 
 
-Media.add_type TwitterMedia
+#Media.add_type TwitterMedia

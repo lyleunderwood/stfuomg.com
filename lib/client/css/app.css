@@ -123,8 +123,18 @@ body, input, textarea {
   float: left;
 }
 
-#message_list .message .media.not_zoomable {
+#message_list .message .media.not_zoomable,
+#message_list .message .media.embedly {
   max-width: none;
+}
+
+#message_list .message .media.embedly .thumbnail {
+  float: left;
+  margin-right: 20px;
+}
+
+#message_list .message .media.embedly .title {
+  display: block;
 }
 
 #message_list .message .media .zoomer {

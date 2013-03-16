@@ -57,7 +57,7 @@ class App
   @start: ->
     global.app = new App
 
-global = @
+global = `window`
 
 if window.addEventListener
   addEventListener 'DOMContentLoaded', App.start

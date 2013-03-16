@@ -3,6 +3,8 @@ class Message extends Node
 
   reference_regex: /\@(\w+)/
 
+  @stripper_node: null
+
   constructor: (params, socket) ->
     @id           = params.id
     @content      = params.content
@@ -48,9 +50,17 @@ class Message extends Node
       @content_node.innerHTML = @content
 
     if @image
-      Media.build @image, @
+      Media.build @strip_html(@image), @
     else if urls
-      Media.build urls[0], @
+      Media.build @strip_html(urls[0]), @
+
+  strip_html: (html) ->
+    if !@stripper_node
+      @stripper_node = document.createElement('div')
+      @stripper_node.style.display= 'none';
+
+    @stripper_node.innerHTML = html
+    @stripper_node.innerText
 
   build: ->
     @node = document.createElement 'li'

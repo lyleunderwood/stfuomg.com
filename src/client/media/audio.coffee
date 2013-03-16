@@ -22,4 +22,4 @@ class AudioMedia extends Media
     !!url.match /\/[^\/]+\.(mp3|aac|wav|mp2|ogg)(\?.*)?$/i
 
 
-Media.add_type AudioMedia
+#Media.add_type AudioMedia

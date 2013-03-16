@@ -26,4 +26,4 @@ class YoutubeMedia extends Media
     !!url.match @regex
 
 
-Media.add_type YoutubeMedia
+#Media.add_type YoutubeMedia

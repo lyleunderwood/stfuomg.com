@@ -40,4 +40,4 @@ class ImageMedia extends Media
     !!url.match /\/[^\/]+\.(png|jpg|jpeg|gif)(\?.*)?$/i
 
 
-Media.add_type ImageMedia
+#Media.add_type ImageMedia

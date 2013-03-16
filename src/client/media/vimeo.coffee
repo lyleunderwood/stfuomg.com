@@ -26,4 +26,4 @@ class VimeoMedia extends Media
     !!url.match @regex
 
 
-Media.add_type VimeoMedia
+#Media.add_type VimeoMedia
