@@ -128,14 +128,10 @@ class MessageList extends Node
   add_message: (message) ->
     message.user_name = @options.name
     message = new Message(message)
-
     @messages[@messages.length] = message
-    was_at_bottom = @at_bottom()
-
     @list_node.appendChild message.build()
     message.filter @filter_pane.get_filters()
-
-    @scroll_bottom() if was_at_bottom
+    @scroll_bottom()
 
   messages_added: (messages) ->
     if @is_hidden()
@@ -157,9 +153,6 @@ class MessageList extends Node
 
   scroll_bottom: ->
     @scroll_node.scrollTop = @list_node.scrollHeight
-
-  at_bottom: ->
-    @scroll_node.scrollTop + @scroll_node.offsetHeight == @scroll_node.scrollHeight
 
   filters_set: (filters) =>
     setTimeout (=>
