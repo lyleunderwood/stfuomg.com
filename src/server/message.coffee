@@ -4,7 +4,7 @@ sanitizer = require 'sanitizer'
 redis.auth(process.env.REDIS_PASS)
 
 module.exports.Message = class Message
-  @max_messages: 50
+  @max_messages: 200
 
   constructor: (params) ->
 
