@@ -167,6 +167,11 @@ class MessageList extends Node
       else
         @remove_class 'mediaonly'
 
+      if filters.hidemedia
+        @add_class 'hidemedia'
+      else
+        @remove_class 'hidemedia'
+
       message.filter filters for message in @messages
       @scroll_bottom()
     ), 1

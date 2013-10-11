@@ -207,6 +207,15 @@ body, input, textarea {
   display: none;
 }
 
+#message_list.hidemedia .message .content .media {
+  display: none;
+}
+
+#message_list.hidemedia .message.media .content:after {
+  content: " (media)";
+  color: #888;
+}
+
 /* entry_form */
 
 #entry_form {

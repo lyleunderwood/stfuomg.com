@@ -63,6 +63,22 @@ class FilterPane
     @mediaonly.type = 'checkbox'
     mediaonly_field.appendChild @mediaonly
 
+    hidemedia_field = document.createElement 'div'
+    hidemedia_field.className = 'field hidemedia'
+    fieldset.appendChild hidemedia_field
+
+    hidemedia_label = document.createElement 'label'
+    hidemedia_label.innerHTML = 'Hide Media'
+    hidemedia_label.for = 'hidemedia'
+    hidemedia_field.appendChild hidemedia_label
+
+    @hidemedia = document.createElement 'input'
+    @hidemedia.id = 'hidemedia'
+    @hidemedia.value = true
+    @hidemedia.checked = false
+    @hidemedia.type = 'checkbox'
+    hidemedia_field.appendChild @hidemedia
+
   attach_events: ->
     @show_joinpart.addEventListener 'change', =>
       @set_option 'show_joinpart', @show_joinpart.checked
@@ -74,6 +90,9 @@ class FilterPane
 
     @mediaonly.addEventListener 'change', =>
       @set_option 'mediaonly', @mediaonly.checked
+
+    @hidemedia.addEventListener 'change', =>
+      @set_option 'hidemedia', @hidemedia.checked
 
   change: ->
     @changed.dispatch @get_filters()
