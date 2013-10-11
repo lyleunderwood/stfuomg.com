@@ -13,6 +13,7 @@ coffee -c -j lib/client/js/client.js \
   src/client/message_list.coffee \
   src/client/message.coffee && \
   \
+cp src/client/css/app.css lib/client/css/app.css && \
 ./node_modules/.bin/browserify lib/client/js/client.js -o lib/client/js/bundle.js && \
 ./node_modules/.bin/uglifyjs -b lib/client/js/bundle.js >lib/client/js/bundle.min.js &&\
 \
