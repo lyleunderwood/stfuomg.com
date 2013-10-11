@@ -32,7 +32,7 @@ upload_middleware = (req, res, next) ->
 two_days = 2*24*60*60*1000
 
 app = connect()
-  .use(gzip.compress())
+  #.use(gzip.compress())
   .use(connect.logger 'dev')
   .use(upload_middleware)
   .use(connect.static __dirname + '/../client', maxAge: two_days)
