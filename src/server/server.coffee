@@ -49,7 +49,11 @@ app = connect()
       socket.on 'message', (data) ->
         data.author_ip = socket.handshake.address.address
 
-        return if !data.content? || data.content.match /^\s*$/ != null
+        # this regex was originally /^\s*$/ but for some reason that would match
+        # any string which contained "true" anywhere in it. it really didn't
+        # make any sense, and this doesn't seem to happen in most regexp
+        # implementations. i assume it's some kinda node bug.
+        return if !data.content? || (data.content.match(/^[ \t\n]*$/) != null)
 
         message = new Message data
 
